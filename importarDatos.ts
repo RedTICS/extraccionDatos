@@ -17,8 +17,8 @@ export class importarDatos {
     //     config.serverSql, config.databaseSql, config.consultaPaciente)
 
     importarRegistros(efector, usuario, password, server, db, consulta, archivo) {
-        var servicio = new servicioMssql();
-        var file = fs.createWriteStream(archivo);
+        let servicio = new servicioMssql();
+        let file = fs.createWriteStream(archivo);
         return new Promise((resolve, reject) => {
 
             servicio.obtenerDatosSql2(usuario, password, server, db, consulta)
@@ -26,12 +26,12 @@ export class importarDatos {
                     if (resultado == null) {
                         console.log('No encontrado');
                     } else {
-                        var listaPacientes = resultado;
-                        var paciente;
+                        let listaPacientes: any = resultado;
+                        let paciente;
                         console.log("Total Pacientes", listaPacientes.length);
                         if (listaPacientes.length > 0) {
-                            console.log(efector, server, db);
-                            var file = fs.createWriteStream(archivo);
+                            // console.log(efector, server, db);
+                            let file = fs.createWriteStream(archivo);
                             file.on('error', function(err) { console.log(err) });
                             switch (efector) {
                                 case "SIPS": {

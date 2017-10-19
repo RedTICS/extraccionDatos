@@ -145,11 +145,8 @@ export class servicioMongo {
                         db.close();
                     }
                 })
-
-
             });
         });
-
     }
 
     buscarPais(pais) {

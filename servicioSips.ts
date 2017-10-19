@@ -18,9 +18,10 @@ export class servicioSips {
         var contacto;
         var domicilio;
         var ubicacion;
-        paciente["idPaciente"] = registroSips.idPaciente;
-        paciente["identificadores"] = [{ "entidad": "SIPS", "valor": registroSips.idPaciente.toString() }];
 
+        paciente["idPaciente"] = registroSips.idPaciente;
+        paciente["identificadores"] = [{ "entidad": "SIPS", "valor": registroSips.idPaciente.toString()}];
+        paciente['carpetaEfectores'] = {'efector': registroSips.efector, 'historiaClinica': registroSips.historiaClinica.toString()};
         paciente["documento"] = registroSips.numeroDocumento.toString();
         if (registroSips.cluster_id) {
             paciente["clusterId"] = registroSips.cluster_id;
