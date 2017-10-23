@@ -42,7 +42,7 @@ function matchPacientes(pacienteApp, pacienteVinculado) {
             documento: pacienteVinculado.documento
         }
         let valorMatching = match.matchPersonas(pacApp, pac, config.weights, 'Levenshtein');
-        if (valorMatching >= 0.95) {
+        if (valorMatching >= 0.85) {
             resolve(valorMatching);
         } else {
             resolve(valorMatching);
@@ -59,7 +59,7 @@ function getOrganizaciones(dbconnection, filter) {
                 $regex: filter
             }
         }
-        dbconnection.collection('organizacion').find(condicion).toArray(function (errores, orgs) {
+        dbconnection.collection('authOrganizaciones').find(condicion).toArray(function (errores, orgs) {
 
             if (errores) {
                 logger.info('Error al intentar recuparar las organizaciones');
@@ -78,8 +78,10 @@ function getOrganizaciones(dbconnection, filter) {
 }
 
 
-// Todos los pacientes
-let condition = {};
+// Todos los pacientes de "X" Centro de Salud
+let condition = {
+    'carpetaEfectores.efector' : {$regex : 'VALENTINA SUR'}
+};
 
 mongoClient.connect(urlMpi, function (err2, db2) {
     mongoClient.connect(urlAndes, function (err, db) {
@@ -101,7 +103,6 @@ mongoClient.connect(urlMpi, function (err2, db2) {
                                         // Verifico el matcheo de pacientes
                                         let matcheo = await matchPacientes(pacHC, pacienteAndes);
                                         if (matcheo >= 0.85) {
-                                            // console.log('Matcheo Alto ok');
                                             let str = pacHC.carpetaEfectores.efector;
                                             let prefijo = str.substr(0, 4);
                                             let filter = '';
@@ -116,7 +117,7 @@ mongoClient.connect(urlMpi, function (err2, db2) {
                                                     filter = 'JEFATURA ZONA'; // ¿Corresponde como efector?
                                                     break
                                                 case 'SUBS':
-                                                    filter = 'XXXX'; // Por el momento lo elimino para importar la HC
+                                                    filter = 'SUBSECRETARIA DE SALUD'; // ¿Corresponde como efector?
                                                     break
                                                 default: // Este es el caso default donde el string es HOSPITAL
                                                     filter = str;
@@ -126,13 +127,14 @@ mongoClient.connect(urlMpi, function (err2, db2) {
                                             if (filter !== 'HOSPITAL') {
                                                 filter = filter + str.substr(4, str.length);
                                             }
-
+                                            
+                                            // Get de authOrganizaciones
                                             let org: any = await getOrganizaciones(db, filter);
                                             if (org) {
                                                 carpetaNueva = {
                                                     organizacion: {
-                                                        nombre: org.nombre,
-                                                        _id: org._id
+                                                        _id: org._id,
+                                                        nombre: org.nombre
                                                     },
                                                     nroCarpeta: pacHC.carpetaEfectores.historiaClinica
                                                 }
