@@ -1,6 +1,6 @@
 import * as config from './config';
 import * as mongodb from 'mongodb';
-import {libString} from './libString';
+import { libString } from './libString';
 //import * as assert from './assert';
 
 export class servicioMongo {
@@ -9,7 +9,7 @@ export class servicioMongo {
         var url = config.urlMigraSips;
         //var url = 'mongodb://localhost:27017/andes';
         return new Promise((resolve, reject) => {
-            mongodb.MongoClient.connect(url, function(err, db) {
+            mongodb.MongoClient.connect(url, function (err, db) {
                 var projection = {
                     _id: 0,
                     "documento": 1,
@@ -26,7 +26,7 @@ export class servicioMongo {
                 }
                 db.collection("paciente").find({
                     idPaciente: 1
-                }, projection).toArray(function(err, items) {
+                }, projection).toArray(function (err, items) {
                     if (err)
                         reject(err);
                     else {
@@ -45,9 +45,9 @@ export class servicioMongo {
         var url = config.urlMongoAndes;
         //var url = 'mongodb://localhost:27017/andes';
         return new Promise((resolve, reject) => {
-            mongodb.MongoClient.connect(url, function(err, db) {
+            mongodb.MongoClient.connect(url, function (err, db) {
                 db.collection("pais").find({
-                }).toArray(function(err, items) {
+                }).toArray(function (err, items) {
                     if (err)
                         reject(err);
                     else {
@@ -64,10 +64,10 @@ export class servicioMongo {
         var url = config.urlMigraSips;
         //var url = 'mongodb://localhost:27017/andes';
         return new Promise((resolve, reject) => {
-            mongodb.MongoClient.connect(url, function(err, db) {
+            mongodb.MongoClient.connect(url, function (err, db) {
                 db.collection("blockPacienteClaveSN").find({
                     count: { $gt: 1 }
-                }).toArray(function(err, items) {
+                }).toArray(function (err, items) {
                     if (err)
                         reject(err);
                     else {
@@ -87,9 +87,9 @@ export class servicioMongo {
         var url = config.urlMongoAndes;
         //var url = 'mongodb://localhost:27017/andes';
         return new Promise((resolve, reject) => {
-            mongodb.MongoClient.connect(url, function(err, db) {
+            mongodb.MongoClient.connect(url, function (err, db) {
                 db.collection("provincia").find({
-                }).toArray(function(err, items) {
+                }).toArray(function (err, items) {
                     if (err)
                         reject(err);
                     else {
@@ -109,9 +109,9 @@ export class servicioMongo {
         var url = config.urlMongoAndes;
         //var url = 'mongodb://localhost:27017/andes';
         return new Promise((resolve, reject) => {
-            mongodb.MongoClient.connect(url, function(err, db) {
+            mongodb.MongoClient.connect(url, function (err, db) {
                 db.collection("localidad").find({
-                }).toArray(function(err, items) {
+                }).toArray(function (err, items) {
                     if (err)
                         reject(err);
                     else
@@ -131,10 +131,10 @@ export class servicioMongo {
         console.log('URL', url, condicion);
         //var url = 'mongodb://localhost:27017/andes';
         return new Promise((resolve, reject) => {
-            mongodb.MongoClient.connect(url, function(err, db) {
+            mongodb.MongoClient.connect(url, function (err, db) {
                 db.collection("paciente").find({
                     "claveSN": condicion
-                }).toArray(function(err, items) {
+                }).toArray(function (err, items) {
                     if (err) {
                         console.log('Error obtenerPacientes', err);
                         reject(err);
@@ -155,10 +155,10 @@ export class servicioMongo {
     buscarPais(pais) {
         var url = config.urlMongoAndes;
         return new Promise((resolve, reject) => {
-            mongodb.MongoClient.connect(url, function(err, db) {
+            mongodb.MongoClient.connect(url, function (err, db) {
                 db.collection("pais").findOne({
                     "nombre": pais
-                }, function(err, item) {
+                }, function (err, item) {
                     if (err) {
                         reject(err);
                     } else {
@@ -176,11 +176,11 @@ export class servicioMongo {
     buscarProvincia(provincia) {
         var url = config.urlMongoAndes;
         return new Promise((resolve, reject) => {
-            mongodb.MongoClient.connect(url, function(err, db) {
+            mongodb.MongoClient.connect(url, function (err, db) {
                 db.collection("provincia").findOne({
                     "nombre": { $regex: libString.makePattern(provincia) }
                     //  "nombre": provincia
-                }, function(err, item) {
+                }, function (err, item) {
                     if (err) {
                         reject(err);
                     } else {
@@ -198,11 +198,11 @@ export class servicioMongo {
     buscarLocalidad(localidad) {
         var url = config.urlMongoAndes;
         return new Promise((resolve, reject) => {
-            mongodb.MongoClient.connect(url, function(err, db) {
+            mongodb.MongoClient.connect(url, function (err, db) {
                 db.collection("localidad").findOne({
                     "nombre": { $regex: libString.makePattern(localidad) }
                     //"nombre": localidad
-                }, function(err, item) {
+                }, function (err, item) {
                     if (err) {
                         reject(err);
                     } else {
@@ -221,7 +221,7 @@ export class servicioMongo {
     abrirConexion() {
         var url = config.urlMigraSips;
         return new Promise((resolve, reject) => {
-            mongodb.MongoClient.connect(url, function(err, db) {
+            mongodb.MongoClient.connect(url, function (err, db) {
                 if (err)
                     reject(err);
                 else
@@ -237,10 +237,10 @@ export class servicioMongo {
     guardarPacientes(pacientes, coleccion: string) {
         var url = config.urlMigracion;
         return new Promise((resolve, reject) => {
-            mongodb.MongoClient.connect(url, function(err, db) {
+            mongodb.MongoClient.connect(url, function (err, db) {
                 console.log('Total Pacientes', pacientes.length);
                 pacientes.forEach(paciente => {
-                    db.collection(coleccion).insertOne(paciente, function(err, item) {
+                    db.collection(coleccion).insertOne(paciente, function (err, item) {
                         if (err) {
                             reject(err);
                         } else {
@@ -255,12 +255,49 @@ export class servicioMongo {
         });
     }
 
+    guardarNomivac(vacunas, coleccion: string) {
+        var url = config.urlMigracion;
+        return new Promise((resolve, reject) => {
+            mongodb.MongoClient.connect(url, function (err, db) {
+                console.log('Total ', vacunas.length);
+                console.log(Date.now());
+
+                var size = 999;
+                for (var i = 0; i < vacunas.length; i += size) {
+                    var vacunas_slice = vacunas.slice(i, i + size);
+
+                    db.collection(coleccion).insertMany(vacunas_slice, { ordered: false }, function (err, item) {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve(item);
+                            console.log('After Resolve' +  Date.now());
+                        }
+                    });
+                }
+
+                // vacunas.forEach(vacuna => {
+                //     db.collection(coleccion).insertOne(vacuna, function(err, item) {
+                //         if (err) {
+                //             reject(err);
+                //         } else {
+                //             resolve(item);
+                //         }
+
+                //     });
+                // });
+                db.close();
+                console.log('After DB Close' +  Date.now());
+            });
+
+        });
+    }
 
     cargaPaciente(paciente) {
         var url = config.urlMigraSips;
         return new Promise((resolve, reject) => {
-            mongodb.MongoClient.connect(url, function(err, db) {
-                db.collection("paciente").insertOne(paciente, function(err, item) {
+            mongodb.MongoClient.connect(url, function (err, db) {
+                db.collection("paciente").insertOne(paciente, function (err, item) {
                     if (err) {
                         reject(err);
                     } else {
@@ -279,8 +316,8 @@ export class servicioMongo {
     guardarMatch(match) {
         var url = config.urlMigraSips;
         return new Promise((resolve, reject) => {
-            mongodb.MongoClient.connect(url, function(err, db) {
-                db.collection("matching").insertOne(match, function(err, item) {
+            mongodb.MongoClient.connect(url, function (err, db) {
+                db.collection("matching").insertOne(match, function (err, item) {
                     if (err) {
                         reject(err);
                     } else {
@@ -295,11 +332,11 @@ export class servicioMongo {
         });
     }
 
-    guardarLog(coleccion: string,log) {
+    guardarLog(coleccion: string, log) {
         var url = config.urlMigracion;
         return new Promise((resolve, reject) => {
-            mongodb.MongoClient.connect(url, function(err, db) {
-                db.collection(coleccion).insertOne(log, function(err, item) {
+            mongodb.MongoClient.connect(url, function (err, db) {
+                db.collection(coleccion).insertOne(log, function (err, item) {
                     if (err) {
                         reject(err);
                     } else {
@@ -317,8 +354,8 @@ export class servicioMongo {
     guardarLogSips(log) {
         var url = config.urlMigraSips;
         return new Promise((resolve, reject) => {
-            mongodb.MongoClient.connect(url, function(err, db) {
-                db.collection("logSips").insertOne(log, function(err, item) {
+            mongodb.MongoClient.connect(url, function (err, db) {
+                db.collection("logSips").insertOne(log, function (err, item) {
                     if (err) {
                         reject(err);
                     } else {
@@ -337,13 +374,13 @@ export class servicioMongo {
 
         var url = config.urlMongoAndes;
         return new Promise((resolve, reject) => {
-            mongodb.MongoClient.connect(url, function(err, db) {
+            mongodb.MongoClient.connect(url, function (err, db) {
                 db.collection("localidadBak").find({
-                }).toArray(function(err, localidades) {
+                }).toArray(function (err, localidades) {
                     if (err) {
                         reject(err);
                     } else {
-                        localidades.forEach(function(loc) {
+                        localidades.forEach(function (loc) {
                             //loc.departamento = libString.toTitleCase(loc.departamento);
                             var ObjectID = mongodb.ObjectID;
                             var idLoc = new ObjectID(loc._id);
@@ -352,7 +389,7 @@ export class servicioMongo {
                             console.log(loc);
                             db.collection("localidadBak").findOneAndUpdate(
                                 { "_id": idLoc },
-                                { $set: { "nombre": loc.nombre } }, function(err, result) {
+                                { $set: { "nombre": loc.nombre } }, function (err, result) {
                                     if (err) {
                                         console.log('Error', err)
                                         reject(err);
