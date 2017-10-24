@@ -1,6 +1,6 @@
 import * as sql from 'mssql';
 import * as config from './config';
-import {libString} from './libString'
+import { libString } from './libString'
 //import {IPaciente} from './interfaces/IPaciente';
 
 
@@ -20,17 +20,17 @@ export class servicioSips {
 
             };
 
-            sql.connect(connection).then(function() {
+            sql.connect(connection).then(function () {
                 // Puede ser una consulta a una vista que tenga toda la información
                 new sql.Request()
                     .input('inicio', sql.VarChar(20), inicio.toString())
                     .input('fin', sql.VarChar(20), fin.toString())
-                    .query(config.consultaPaciente).then(function(recordset) {
+                    .query(config.consultaPaciente).then(function (recordset) {
                         //console.dir(recordset);
                         //console.log(recordset.length);
                         resolve([recordset]);
 
-                    }).catch(function(err) {
+                    }).catch(function (err) {
                         // ... query error checks
                         console.log("Error de conexión");
                         reject(err);
@@ -245,8 +245,33 @@ export class servicioSips {
 
     }
 
+    obtenerDatosNomivac(inicio: number, fin: number) {
 
+        return new Promise((resolve, reject) => {
 
+            var connection = {
+                user: config.user,
+                password: config.password,
+                server: config.serverSql,
+                database: config.databaseSql,
+                requestTimeout: config.requestTimeout
+            };
 
+            sql.connect(connection).then(function () {
+                new sql.Request()
+                    //.input('inicio', sql.VarChar(20), inicio.toString())
+                    //.input('fin', sql.VarChar(20), fin.toString())
+                    .query(config.consultaNomivac).then(function (recordset) {
+                        //console.dir(recordset);
+                        //console.log(recordset.length);
+                        resolve([recordset]);
 
+                    }).catch(function (err) {
+                        // ... query error checks
+                        console.log("Error de conexión");
+                        reject(err);
+                    });
+            })
+        })
+    }
 }
