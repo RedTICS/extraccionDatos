@@ -271,27 +271,34 @@ export class servicioMongo {
                             reject(err);
                         } else {
                             resolve(item);
-                            console.log('After Resolve' +  Date.now());
+                            console.log('After Resolve ' + Date.now());
                         }
                     });
                 }
 
-                // vacunas.forEach(vacuna => {
-                //     db.collection(coleccion).insertOne(vacuna, function(err, item) {
-                //         if (err) {
-                //             reject(err);
-                //         } else {
-                //             resolve(item);
-                //         }
-
-                //     });
-                // });
                 db.close();
-                console.log('After DB Close' +  Date.now());
+                console.log('After DB Close ' + Date.now());
             });
 
         });
     }
+
+    borrarCollection(coleccion:string) {
+        var url = config.urlMigracion;
+        return new Promise((resolve, reject) => {
+            mongodb.MongoClient.connect(url, function (err, db) {
+                var coleccionBorrar = db.getCollection(coleccion);
+                coleccionBorrar.drop(function (err) {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve();
+                    }
+                });
+            });
+        });
+    }
+
 
     cargaPaciente(paciente) {
         var url = config.urlMigraSips;

@@ -13,6 +13,7 @@ srvSips.obtenerDatosNomivac(1, 2)
             var listaVacunas;
             listaVacunas = resultado[0];
             //console.log(listaVacunas);
+            //srvMongo.borrarCollection('nomivac');
             srvMongo.guardarNomivac(listaVacunas, 'nomivac')
                 .then((res => {
                     console.log('Guardar Vacunas');
