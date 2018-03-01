@@ -1,6 +1,7 @@
 import * as sql from 'mssql';
 import * as config from './config';
 import { libString } from './libString'
+import { resolve } from 'path';
 //import {IPaciente} from './interfaces/IPaciente';
 
 
@@ -273,5 +274,51 @@ export class servicioSips {
                     });
             })
         })
+    }
+
+    obtenerDatosFinanciador(){
+        return new Promise((resolve,reject)=> {
+            var connection = {
+                user:config.user,
+                password: config.password,
+                server: config.serverSql,
+                database: config.databasePadron,
+                requestTimeout: config.requestTimeout
+            };
+
+            sql.connect(connection).then(function () {
+                new sql.Request()
+                .query(config.consultaFinanciador).then(function(recordset){
+                    resolve([recordset]);
+                
+                }).catch(function(err) {
+                    console.log("Error de conexión");
+                    reject(err);
+                });
+            });
+        });
+    }
+
+    obtenerDatosPuco(){
+        return new Promise((resolve,reject)=> {
+            var connection = {
+                user:config.user,
+                password: config.password,
+                server: config.serverSql,
+                database: config.databasePadron,
+                requestTimeout: config.requestTimeout
+            };
+
+            sql.connect(connection).then(function () {
+                new sql.Request()
+                .query(config.consultaPuco).then(function(recordset){
+                    resolve([recordset]);
+                
+                }).catch(function(err) {
+                    console.log("Error de conexión");
+                    reject(err);
+                });
+            });
+        });
     }
 }

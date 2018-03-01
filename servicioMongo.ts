@@ -283,6 +283,59 @@ export class servicioMongo {
         });
     }
 
+    guardarFinanciador(datos, coleccion: string) {
+        var url = config.urlMigracion;
+        return new Promise((resolve, reject) => {
+            mongodb.MongoClient.connect(url, function (err, db) {
+                console.log('Total ', datos.length);
+                console.log(Date.now());
+
+                const size = 999;
+                for (var i = 0; i < datos.length; i += size) {
+                    var datos_slice = datos.slice(i, i + size);
+
+                    db.collection(coleccion).insertMany(datos_slice, { ordered: false }, function (err, item) {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve(item);
+                            console.log('After Resolve ' + Date.now());
+                        }
+                    });
+                }
+                db.close();
+                console.log('After DB Close ' + Date.now());
+            });
+
+        });
+    }
+
+    guardarDatos(datos, coleccion: string) {
+        var url = config.urlMigracion;
+        return new Promise((resolve, reject) => {
+            mongodb.MongoClient.connect(url, function (err, db) {
+                console.log('Total ', datos.length);
+                console.log(Date.now());
+
+                const size = 999;
+                for (var i = 0; i < datos.length; i += size) {
+                    var datos_slice = datos.slice(i, i + size);
+
+                    db.collection(coleccion).insertMany(datos_slice, { ordered: false }, function (err, item) {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve(item);
+                            console.log('After Resolve ' + Date.now());
+                        }
+                    });
+                }                
+                db.close();
+                console.log('After DB Close ' + Date.now());
+            });
+        });
+    }
+
     borrarCollection(coleccion:string) {
         var url = config.urlMigracion;
         return new Promise((resolve, reject) => {
