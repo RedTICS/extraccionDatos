@@ -6,6 +6,7 @@
   "dependencies": {
     "jsdoc": "^3.4.0",
     "mongodb": "^3.0.1",
+    "mongodb-topology-manager": "^2.0.0",
     "mssql": "^4.1.0",
     "request": "^2.78.0",
     "typescript": "^2.6.2",

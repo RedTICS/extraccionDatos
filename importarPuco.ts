@@ -9,8 +9,8 @@ import * as assert from 'assert';
 import { resolve } from 'path';
 import { EventEmitter } from 'events';
 
-var srvSips = new servicioSips();
-var srvMongo = new servicioMongo();
+//var srvSips = new servicioSips();
+//var srvMongo = new servicioMongo();
 
 const connection = {
     user: config.user,
@@ -20,9 +20,9 @@ const connection = {
 };
 const url = config.urlMigracion;
 
-var offset = 1;
+//var offset = 0;
 var limit = 999;
-var max = 15000000;
+var max = 5000000;
 
 var emitter = new EventEmitter();
 emitter.setMaxListeners(0);
@@ -33,16 +33,22 @@ async function insertmongo(datos) {
     try {
         let conn = await mongodb.MongoClient.connect(url)
         let db = await conn.db('andes')
+        // When the mongodb server goes down, the driver emits a 'close' event
+        db.on('close', () => { console.log('-> lost mongodb connection'); });
+        // The driver tries to automatically reconnect by default, so when the
+        // server starts the driver will reconnect and emit a 'reconnect' event.
+        db.on('reconnect', () => { console.log('-> mongodb reconnected'); });
+
         let result = await db.collection('puco').insertMany(datos.recordset, { ordered: false })
         // console.dir(result)
     } catch (err) {
-        console.log("error insertMongo----",err)
+        console.log("error insertMongo----", err)
     }
 }
 
-async function getPuco(){
+async function getPuco() {
     console.log("Entra a gePuco")
-    let pool =  await sql.connect(connection);
+    let pool = await sql.connect(connection);
     sql.on('error', err => {
         // ... error handler
         console.log(err);
@@ -57,7 +63,7 @@ async function getPuco(){
             console.dir(i);
         } catch (err) {
             // ... error checks
-            console.log("ERROR getPuco---",err);
+            console.log("ERROR getPuco---", err);
         }
     }
     pool.close();
