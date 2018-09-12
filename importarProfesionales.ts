@@ -11,7 +11,7 @@ var myConnection = mysql.createConnection({
 const url = config.urlMigracion;
 
 var limit = 999;
-var max = 5000;
+var max = 20000;
 
 myConnection.connect(function (err) {
     if (err) {
