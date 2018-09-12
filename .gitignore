@@ -11,3 +11,5 @@ config.ts
 config.js
 *.js.map
 *js
+!agregationProfesion.js
+!agregationProfesional.js
