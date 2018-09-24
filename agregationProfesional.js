@@ -18,7 +18,9 @@ db.profesional.aggregate(
 					nombre: "$nacionalidad_nombre",
 				},
 				sexo: 1,
+                                turno: 1,
 				notas: 1,
+				rematriculado: 1,
 				domicilios: [{
 					activo: true,
 					tipo: "real",
@@ -94,7 +96,8 @@ db.profesional.aggregate(
 				formacionGrado: [{
 					profesion: {
                                                 codigo: "$profesion_codigo_sisa",
-						nombre: "$profesion_nombre",
+						codigoReferencia: "$profesion_codigo_referencia",
+                                                nombre: "$profesion_nombre",
                                                 tipoDeFormacion: "$profesion_tipo_formacion"
 					},
 					entidadFormadora: {
@@ -165,23 +168,25 @@ db.profesional.aggregate(
 			$group: {
 				_id: {
 					documento: "$documento",
-					tipoDocumento: "$tipoDocumento",
-					nombre: "$nombre",
-					apellido: "$apellido",
-					documentoVencimiento: "$documentoVencimiento",
-					cuit: "$cuit",
-					fechaNacimiento: "$fechaNacimiento",
-					lugarNacimiento: "$lugarNacimiento",
-					nacionalidad: "$nacionalidad",
-					sexo: "$sexo",
-					notas: "$notas"
+					sexo: "$sexo"
 				},
 				idOld: { $min: "$_id" },
 				formacionGrado: { $addToSet: "$formacionGrado" },
 				formacionPosgrado: { $addToSet: "$formacionPosgrado" },
 				sanciones: { $addToSet: "$sanciones" },
 				domicilios: { $addToSet: "$domicilios" },
-				contactos: { $addToSet: "$contactos" }
+				contactos: { $addToSet: "$contactos" },
+                                fechaNacimiento: { $first: "$fechaNacimiento" },
+				lugarNacimiento: { $first: "$lugarNacimiento" },
+				nacionalidad: { $first: "$nacionalidad" },
+                                tipoDocumento: { $first: "$tipoDocumento" },
+				nombre: { $first: "$nombre" },
+				apellido: { $first: "$apellido" },
+				documentoVencimiento: { $first: "$documentoVencimiento"},
+				cuit: { $first: "$cuit"},
+                                notas: { $push: "$notas"},
+                                rematriculado: { $first: "$rematriculado"},
+                                turno: { $first:"$turno" },
 			}
 		},
 
@@ -222,7 +227,8 @@ db.profesional.aggregate(
 						"initialValue": [],
 						"in": { "$setUnion": ["$$value", "$$this"] }
 					}
-				}
+				},
+                                "profesionalMatriculado": true,
 
 			}
 		},
@@ -231,22 +237,25 @@ db.profesional.aggregate(
 		{
 			$project: {
 				_id: "$idOld",
-				nombre: "$_id.nombre",
-				apellido: "$_id.apellido",
-				tipoDocumento: "$_id.tipoDocumento",
+				nombre: "$nombre",
+				apellido: "$apellido",
+				tipoDocumento: "$tipoDocumento",
 				documento: "$_id.documento",
-				documentoVencimiento: "$_id.documentoVencimiento",
-				cuit: "$_id.cuit",
-				fechaNacimiento: "$_id.fechaNacimiento",
-				lugarNacimiento: "$_id.lugarNacimiento",
-				nacionalidad: "$_id.nacionalidad",
+				documentoVencimiento: "$documentoVencimiento",
+				cuit: "$cuit",
+				fechaNacimiento: "$fechaNacimiento",
+				lugarNacimiento: "$lugarNacimiento",
+				nacionalidad: "$nacionalidad",
 				sexo: "$_id.sexo",
-				notas: "$_id.notas",
+				notas: "$notas",
 				formacionGrado: "$formacionGrado",
 				formacionPosgrado: "$formacionPosgrado",
 				sanciones: "$sanciones",
 				domicilios: "$domicilios",
 				contactos: "$contactos",
+                                rematriculado: "$rematriculado",
+                                turno: "$turno",
+                                profesionalMatriculado: "$profesionalMatriculado",
 			}
 		},
 
@@ -264,7 +273,5 @@ db.profesional.aggregate(
 
 	],
 	{ allowDiskUse: true }
-
-	// Created with Studio 3T, the IDE for MongoDB - https://studio3t.com/
 
 );
