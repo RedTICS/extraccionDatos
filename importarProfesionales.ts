@@ -1,6 +1,7 @@
 import * as mysql from 'mysql';
 import * as mongodb from 'mongodb';
 import * as config from './config';
+import * as consultas from './consultas'
 
 var myConnection = mysql.createConnection({
     host: config.mysqlServer,
@@ -27,7 +28,7 @@ async function run() {
     let profesionales = null;
     for (var i = 0; i <= max; i += limit) {
         try {
-            profesionales = await getProfesionalesFull(i, limit);
+            profesionales = await getProfesionales(i, limit);
             if (profesionales.length > 0) {
                 insertmongo(profesionales);
             } else {
@@ -39,18 +40,9 @@ async function run() {
     }
 };
 
-async function getProfesionales() {
+async function getProfesionales(desde, hasta) {
     return new Promise((resolve, reject) => {
-        myConnection.query(config.consultaProfesionales, function (error, results, fields) {
-            if (error) reject(error);
-            resolve(results);
-        });
-    })
-}
-
-async function getProfesionalesFull(desde, hasta) {
-    return new Promise((resolve, reject) => {
-        myConnection.query(config.consultaProfesionalesFull, [desde, hasta], function (error, results, fields) {
+        myConnection.query(consultas.consultaProfesionales, [desde, hasta], function (error, results, fields) {
             if (error) reject(error);
             resolve(results);
         });
@@ -68,16 +60,3 @@ async function insertmongo(datos) {
     }
 }
 
-// async function insertmongo(datos) {
-//     let conn = await mongodb.MongoClient.connect(url);
-//     let db = await conn.db('andes');
-//     return new Promise((resolve, reject) => {
-//         db.collection('profesional').insertMany(datos, { ordered: false }, function (err, result) {
-//             if (err) reject(err);
-//             resolve(result);
-//         });
-//         conn.close();
-//     });
-// }
-
-// myConnection.end();
