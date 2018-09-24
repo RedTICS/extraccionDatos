@@ -1,7 +1,7 @@
 import * as mysql from 'mysql';
 import * as mongodb from 'mongodb';
 import * as config from './config';
-import * as consultas from './consultas'
+import * as consultas from './consultas';
 
 var myConnection = mysql.createConnection({
     host: config.mysqlServer,

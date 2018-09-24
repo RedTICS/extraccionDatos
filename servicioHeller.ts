@@ -1,6 +1,7 @@
 import * as sql from 'mssql';
 import * as config from './config';
-import {libString} from './libString'
+import {libString} from './libString';
+import * as consultas from './consultas';
 
 
 export class servicioHeller {
@@ -24,7 +25,7 @@ export class servicioHeller {
                 new sql.Request()
                     .input('inicio', sql.VarChar(20), inicio.toString())
                     .input('fin', sql.VarChar(20), fin.toString())
-                    .query(config.consultaPacienteHeller)
+                    .query(consultas.consultaPacienteHeller)
                     .then(function(recordset) {
                         console.dir(recordset);
                         //console.log(recordset.length);

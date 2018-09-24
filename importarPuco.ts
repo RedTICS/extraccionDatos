@@ -5,6 +5,7 @@ import { debug } from 'util';
 import * as assert from 'assert';
 import { resolve } from 'path';
 import { EventEmitter } from 'events';
+import * as consultas from './consultas';
 
 const connection = {
     user: config.user,
@@ -40,7 +41,7 @@ async function getPuco() {
             let result1 = await pool.request()
                 .input('offset', sql.Int, i)
                 .input('limit', sql.Int, limit)
-                .query(config.consultaPuco)
+                .query(consultas.consultaPuco)
             const inserciones = await insertmongo(result1.recordset);
             sql.close();
             console.dir(i);

@@ -1,6 +1,7 @@
 import * as sql from 'mssql';
 import * as config from './config';
-import {libString} from './libString'
+import {libString} from './libString';
+import * as consultas from './consultas';
 
 
 export class servicioHPN {
@@ -24,7 +25,7 @@ export class servicioHPN {
                 new sql.Request()
                     .input('inicio', sql.VarChar(20), inicio.toString())
                     .input('fin', sql.VarChar(20), fin.toString())
-                    .query(config.consultaPacienteHC)
+                    .query(consultas.consultaPacienteHC)
                     .then(function(recordset) {
                         resolve(recordset);
 

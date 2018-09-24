@@ -1,3 +1,7 @@
+// TODO: Mover todos llamados a las consultas de abajo al archivo consultas.ts
+// TODO: Cambiar en las consultas multilinea las comillas simples o dobles de apertura y cierre por backticks (acentos invertidos) 
+// y eliminar los signos + de cada fin de linea (ver consultas.consultaProfesiones como ejemplo de uso)
+
 export const consultaPaciente = 'SELECT PAC.idPaciente,PAC.nombre, PAC.apellido, PAC.numeroDocumento,idsexo,convert(varchar(10),PAC.fechaNacimiento,103) AS fechaNacimiento, ' +
     'PAC.calle, PAC.numero, PAC.piso, PAC.departamento, PAC.manzana, PAC.lote, PAC.parcela, L.idLocalidad,' +
     'L.nombre AS nombreLocalidad, L.codigoPostal, PROVINCIA.nombre as nombreProvincia,PAC.idProvinciaDomicilio, PAIS.nombre as nombrePais, PAC.idPais, ' +

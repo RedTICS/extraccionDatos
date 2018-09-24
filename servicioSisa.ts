@@ -1,9 +1,6 @@
-/// <reference path="typings/index.d.ts" />
 import * as sql from 'mssql';
 import * as parser from 'xml2json';
 import * as https from 'https';
-
-
 
 export class servicioSisa {
 

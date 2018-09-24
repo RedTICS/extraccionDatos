@@ -2,6 +2,7 @@
 import * as utils from '../utils';
 import * as config from '../../config';
 import * as mongodb from 'mongodb';
+import * as consultas from '../../consultas';
 
 
 var db;
@@ -82,7 +83,7 @@ function migrar() {
     let q_limites='SELECT COUNT(*) FROM PD_PUCO';
     abrirConexion(config.urlMongoAndes).then(base => {
         db = base;
-        return utils.migrarOffset(config.consultaPuco, q_limites, 100, inserPuco);
+        return utils.migrarOffset(consultas.consultaPuco, q_limites, 100, inserPuco);
                
     })
 

@@ -1,8 +1,7 @@
 import * as sql from 'mssql';
 import * as config from './config';
 import { libString } from './libString'
-import { resolve } from 'path';
-//import {IPaciente} from './interfaces/IPaciente';
+import * as consultas from './consultas';
 
 
 export class servicioSips {
@@ -26,7 +25,7 @@ export class servicioSips {
                 new sql.Request()
                     .input('inicio', sql.VarChar(20), inicio.toString())
                     .input('fin', sql.VarChar(20), fin.toString())
-                    .query(config.consultaPaciente).then(function (recordset) {
+                    .query(consultas.consultaPaciente).then(function (recordset) {
                         //console.dir(recordset);
                         //console.log(recordset.length);
                         resolve([recordset]);
@@ -262,7 +261,7 @@ export class servicioSips {
                 new sql.Request()
                     //.input('inicio', sql.VarChar(20), inicio.toString())
                     //.input('fin', sql.VarChar(20), fin.toString())
-                    .query(config.consultaNomivac).then(function (recordset) {
+                    .query(consultas.consultaNomivac).then(function (recordset) {
                         //console.dir(recordset);
                         //console.log(recordset.length);
                         resolve([recordset]);
@@ -288,7 +287,7 @@ export class servicioSips {
 
             sql.connect(connection).then(function () {
                 new sql.Request()
-                .query(config.consultaFinanciador).then(function(recordset){
+                .query(consultas.consultaFinanciador).then(function(recordset){
                     resolve([recordset]);
                 
                 }).catch(function(err) {
@@ -311,7 +310,7 @@ export class servicioSips {
 
             sql.connect(connection).then(function () {
                 new sql.Request()
-                .query(config.consultaPuco).then(function(recordset){
+                .query(consultas.consultaPuco).then(function(recordset){
                     resolve([recordset]);
                 
                 }).catch(function(err) {

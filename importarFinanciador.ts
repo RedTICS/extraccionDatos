@@ -6,6 +6,7 @@ import * as mongodb from 'mongodb';
 import * as config from './config';
 import { debug } from 'util';
 import * as assert from 'assert';
+import * as consultas from './consultas';
 
 var srvSips = new servicioSips();
 var srvMongo = new servicioMongo();
@@ -23,7 +24,7 @@ sql.connect(connection, err => {
 
     const request = new sql.Request()
     request.stream = true // You can set streaming differently for each request
-    request.query(config.consultaFinanciador) // or request.execute(procedure)
+    request.query(consultas.consultaFinanciador) // or request.execute(procedure)
 
     request.on('recordset', columns => {
         // Emitted once for each recordset in a query
