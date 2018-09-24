@@ -1,6 +1,7 @@
 import * as mysql from 'mysql';
 import * as mongodb from 'mongodb';
 import * as config from './config';
+import * as consultas from './consultas'
 
 var myConnection = mysql.createConnection({
     host: config.mysqlServer,
@@ -36,7 +37,7 @@ async function run() {
 
 async function getProfesiones() {
     return new Promise((resolve, reject) => {
-        myConnection.query(config.consultaProfesiones, function (error, results, fields) {
+        myConnection.query(consultas.consultaProfesiones, function (error, results, fields) {
             if (error) reject(error);
             resolve(results);
         });
