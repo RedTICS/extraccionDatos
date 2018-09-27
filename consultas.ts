@@ -304,9 +304,57 @@ WHERE
     TD.TipoDocumentoDesc = ?
 ORDER BY P.ProfesionalDocumento, P.TipoDocumentoID;`;
 
-export const weights = {
-        identity: 0.55,
-        name: 0.10,
-        gender: 0.3,
-        birthDate: 0.05
-    }
+export const consultaLaboratorioPracticas = `
+SELECT  i.codigo ,
+        i.nombre ,
+        i.codigoNomenclador ,
+        i.descripcion ,
+        i.conceptId AS conceptoSnomed ,
+        ts.nombre AS tipoLaboratorio_nombre ,
+        UPPER(a.nombre) AS area_nombre ,
+		a.conceptId AS area_conceptoSnomed ,
+        CASE WHEN i.idCategoria = 0 THEN 'simple'
+             ELSE 'compuesta'
+        END AS categoria ,
+        i.ordenImpresion ,
+        u.nombre unidadMedida_nombre ,
+        u.conceptId AS unidadMedida_concepto_conceptId ,
+        '' AS requeridos ,
+        r.resultado AS resultado_formato_opciones ,
+		-- metodo
+        m.nombre AS metodo_nombre ,
+        vr.sexo AS metodo_valoresReferencia_sexo ,
+        vr.todasEdades AS metodo_valoresReferencia_todasEdades ,
+        vr.edadDesde AS metodo_valoresReferencia_edadDesde ,
+        vr.edadHasta AS metodo_valoresReferencia_edadHasta ,
+        vr.unidadEdad AS metodo_valoresReferencia_unidadEdad ,
+        vr.tipoValor AS metodo_valoresReferencia_tipoValor ,
+        vr.valorMinimo AS metodo_valoresReferencia_valorMinimo ,
+        vr.valorMaximo AS metodo_valoresReferencia_valorMaximo ,
+        vr.observacion AS metodo_valoresReferencia_observacion ,
+        CONVERT(BIT, 1) AS metodo_valoresReferencia_activo ,
+        'cargar reactivos' AS metodo_valoresReferencia_reactivo ,
+		-- valoresCriticos
+        i.valorMinimo AS valoresCriticos_minimo ,
+        i.valorMaximo AS valoresCriticos_maximo ,
+        i.etiquetaAdicional ,
+        ir.idRecomendacion ,
+        rc.nombre AS recomendaciones_nombre ,
+        rc.descripcion AS recomendaciones_descripcion
+FROM    dbo.LAB_Item i
+        LEFT JOIN dbo.LAB_Area a ON a.idArea = i.idArea
+        LEFT JOIN dbo.LAB_TipoServicio ts ON ts.idTipoServicio = a.idTipoServicio
+        LEFT JOIN dbo.LAB_UnidadMedida u ON u.idUnidadMedida = i.idUnidadMedida
+        LEFT JOIN dbo.LAB_ResultadoItem r ON r.idItem = i.idItem
+        LEFT JOIN dbo.LAB_ValorReferencia vr ON vr.idItem = i.idItem
+        LEFT JOIN dbo.LAB_Metodo m ON m.idMetodo = vr.idMetodo
+        LEFT JOIN dbo.LAB_ItemRecomendacion ir ON ir.idItem = i.idItem
+        LEFT JOIN dbo.LAB_Recomendacion rc ON rc.idRecomendacion = ir.idRecomendacion
+WHERE   i.baja = 0 AND i.conceptId IS NOT NULL AND i.conceptId <>'XXX'
+        AND a.baja = 0 
+        -- AND ts.baja = 0
+        -- AND u.baja = 0
+        -- AND r.baja = 0
+        -- AND m.baja = 0
+        -- AND rc.baja = 0
+ORDER BY i.codigo;`;
