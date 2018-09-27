@@ -13,5 +13,7 @@ config.js
 *js
 !agregationProfesion.js
 !agregationProfesional.js
+!agregationLaboratorioPractica.js
+!agregationProfesionalSchemaCountDocumento.js
 fotos
 datos
