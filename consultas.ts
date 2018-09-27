@@ -218,6 +218,17 @@ ORDER BY P.ProfesionalDocumento, P.TipoDocumentoID
 LIMIT ?, ? ;
 `;
 
+export const consultaFotos= `
+SELECT
+P.ProfesionalNombre          AS nombre,
+P.ProfesionalApellido        AS apellido,
+P.ProfesionalDocumento       AS documento,
+P.ProfesionalFoto            AS foto,
+P.ProfesionalFirma            AS firma
+FROM profesionales P
+ORDER BY P.ProfesionalDocumento, P.TipoDocumentoID
+LIMIT ?, ? ;
+`;
 export const consultaProfesiones= `
 SELECT
 CONVERT( ProfesionEquivalenciaSISA, UNSIGNED INTEGER)  AS profesion_codigo,
