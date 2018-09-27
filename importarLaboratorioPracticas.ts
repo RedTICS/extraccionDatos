@@ -9,21 +9,12 @@ var myConnection = {
     server: config.hpnServerSql,
     port: config.hpnPort,
     database: config.hpnDatabaseSql,
-    //connectionTimeout: config.connectionTimeout,
     requestTimeout: config.requestTimeout
 };
 const url = config.urlMigracion;
 
 var limit = 999;
 var max = 20000;
-
-// sql.connect(myConnection).then(function (err) {
-//     if (err) {
-//         console.error('error connecting: ' + JSON.parse(err));
-//         return;
-//     }
-//     console.log('connected :) ');
-// })
 
 
 function obtenerPracticas() {
@@ -51,24 +42,6 @@ async function run() {
     insertmongo(practicas);
 };
 
-// async function run() {
-    // let laboratorios = null;
-    // for (var i = 0; i <= max; i += limit) {
-    //     try {
-    //         laboratorios = await getLaboratorioPracticas(i, limit);
-    //         if (laboratorios.length > 0) {
-    //             console.log('ok');
-    //             //insertmongo(laboratorios);
-    //         } else {
-    //             console.log('game over');
-    //         }
-    //     } catch (e) {
-    //         console.log('Error: ');
-    //     }
-    // }
-// };
-
-
 async function getLaboratorioPracticas(desde, hasta) {
     return new Promise((resolve, reject) => {
         sql.connect(myConnection).then(function () {
@@ -87,6 +60,7 @@ async function insertmongo(datos) {
         let db = await conn.db('andes');
         let result = await db.collection('practicaTemp').insertMany(datos, { ordered: false })
         conn.close();
+        console.log("inserted", datos.length)
     } catch (err) {
         console.log("error insertMongo----", err, "datos: ", datos);
     }
