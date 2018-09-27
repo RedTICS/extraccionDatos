@@ -350,7 +350,7 @@ FROM    dbo.LAB_Item i
         LEFT JOIN dbo.LAB_Metodo m ON m.idMetodo = vr.idMetodo
         LEFT JOIN dbo.LAB_ItemRecomendacion ir ON ir.idItem = i.idItem
         LEFT JOIN dbo.LAB_Recomendacion rc ON rc.idRecomendacion = ir.idRecomendacion
-WHERE   i.baja = 0 AND i.conceptId IS NOT NULL AND i.conceptId <>'XXX'
+WHERE   i.baja = 0 AND i.conceptId IS NOT NULL AND i.conceptId <>'XXX' AND i.idCategoria = 0
         AND a.baja = 0 
         -- AND ts.baja = 0
         -- AND u.baja = 0
