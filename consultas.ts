@@ -321,6 +321,17 @@ SELECT  i.codigo ,
         u.conceptId AS unidadMedida_concepto_conceptId ,
         '' AS requeridos ,
         r.resultado AS resultado_formato_opciones ,
+        i.resultadoDefecto AS resultado_valorDefault ,
+        CASE ( i.idTipoResultado )
+          WHEN 1 THEN 'Numérico'
+          WHEN 2 THEN 'Texto'
+          WHEN 3 THEN 'Predefenidos (Selección simple)'
+          WHEN 4 THEN 'Predefenidos (Selección múltiple)'
+          ELSE 'Otro'
+        END AS resultado_formato_tipo ,
+        i.formatoDecimal AS resultado_formato_decimales,
+        i.multiplicador AS resultado_formato_multiplicador,
+        
 		-- metodo
         m.nombre AS metodo_nombre ,
         vr.sexo AS metodo_valoresReferencia_sexo ,

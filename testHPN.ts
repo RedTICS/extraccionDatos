@@ -87,7 +87,7 @@ function migracionPacientes(indice) {
                                     .then((res => {
                                         //console.log('Guardar Paciente', paciente["idPaciente"]);
                                         console.log('Guardar Pacientes');
-                                        resolve(lista.length);
+                                        resolve(lista);
                                     }))
                                     .catch((err => {
 
