@@ -85,7 +85,7 @@ db.practicaTempAll.aggregate([
             descripcion: { $first: '$descripcion' },
             categoria: { $first: '$categoria' },
             ordenImpresion: { $first: '$ordenImpresion' },
-            concepto: { $first: "$conceptoSnomed" },
+            concepto: { $first: "$concepto" },
             sistema: { $first: '$sistema' },
             tipoLaboratorio: { $first: "$tipoLaboratorio" },
             area: { $first: '$area' },
