@@ -31,8 +31,8 @@ db.practicaTempAll.aggregate([
                     tipo: "$resultado_formato_tipo",
                     decimales: "$resultado_formato_decimales",
                     multiplicador: "$resultado_formato_multiplicador",
-                    notacionCientifica : {
-                        exponentePredeterminado: null 
+                    notacionCientifica: {
+                        exponentePredeterminado: null
                     },
                     limiteDeteccion: {  /* para poner "menor que 10", valor numerico (numero entre 10 y 50), o "mayor que 50" */
                         minimo: null,
@@ -57,14 +57,15 @@ db.practicaTempAll.aggregate([
                     activo: "$metodo_valoresReferencia_activo",
                     reactivo: ["$metodo_valoresReferencia_reactivo"]
                 },
-
             },
             valoresCriticos: {
                 minimo: "$valoresCriticos_minimo",
                 maximo: "$valoresCriticos_maximo"
             },
-            recomendaciones: [],
-
+            recomendaciones: [{
+                nombre: "$recomendaciones_nombre",
+                descripcion: "$recomendaciones_descripcion",
+            }],
             factorProduccion: null,
             opciones: {
                 $cond: [
@@ -105,9 +106,7 @@ db.practicaTempAll.aggregate([
     },
     { $out: "practicaJR" }
 ])
-
 db.practicaJR.update({}, { $unset: { opciones: 1 } }, false, true)
-
 // db.practicaTemp.aggregate(
 //     [
 //         // Stage 1
@@ -158,14 +157,12 @@ db.practicaJR.update({}, { $unset: { opciones: 1 } }, false, true)
 //                         activo: "$metodo_valoresReferencia_activo",
 //                         reactivo: ["$metodo_valoresReferencia_reactivo"]
 //                     },
-
 //                 },
 //                 valoresCriticos: {
 //                     minimo: "$valoresCriticos_minimo",
 //                     maximo: "$valoresCriticos_maximo"
 //                 },
 //                 recomendaciones: [],
-
 //                 factorProduccion: null
 //             }
 //         },
