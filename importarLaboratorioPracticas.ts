@@ -58,7 +58,7 @@ async function insertmongo(datos) {
     try {
         let conn = await mongodb.MongoClient.connect(url);
         let db = await conn.db('andes');
-        let result = await db.collection('practicaTemp').insertMany(datos, { ordered: false })
+        let result = await db.collection('practicaTempAll').insertMany(datos, { ordered: false })
         conn.close();
         console.log("inserted", datos.length)
     } catch (err) {
