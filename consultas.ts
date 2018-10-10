@@ -315,12 +315,13 @@ WHERE
     TD.TipoDocumentoDesc = ?
 ORDER BY P.ProfesionalDocumento, P.TipoDocumentoID;`;
 
-export const consultaLaboratorioPracticas = `
+const selectLaboratorioPracticas = `
 SELECT  i.codigo ,
         i.nombre ,
         i.codigoNomenclador ,
         i.descripcion ,
         i.conceptId AS conceptoSnomed ,
+        i.tipo AS tipo,
         ts.nombre AS tipoLaboratorio_nombre ,
         UPPER(a.nombre) AS area_nombre ,
 		a.conceptId AS area_conceptoSnomed ,
@@ -362,8 +363,16 @@ SELECT  i.codigo ,
         i.etiquetaAdicional ,
         ir.idRecomendacion ,
         rc.nombre AS recomendaciones_nombre ,
-        rc.descripcion AS recomendaciones_descripcion
-FROM    dbo.LAB_Item i
+        rc.descripcion AS recomendaciones_descripcion`;
+
+const selectLaboratorioPracticasCompuestas = `
+        , si.codigo AS subitem_codigo ,
+        si.nombre AS subitem_nombre ,
+        si.codigoNomenclador AS subitem_codigoNomenclador `;
+        
+
+const fromLaboratorioPracticas = `
+    FROM dbo.LAB_Item i
         LEFT JOIN dbo.LAB_Area a ON a.idArea = i.idArea
         LEFT JOIN dbo.LAB_TipoServicio ts ON ts.idTipoServicio = a.idTipoServicio
         LEFT JOIN dbo.LAB_UnidadMedida u ON u.idUnidadMedida = i.idUnidadMedida
@@ -371,12 +380,24 @@ FROM    dbo.LAB_Item i
         LEFT JOIN dbo.LAB_ValorReferencia vr ON vr.idItem = i.idItem
         LEFT JOIN dbo.LAB_Metodo m ON m.idMetodo = vr.idMetodo
         LEFT JOIN dbo.LAB_ItemRecomendacion ir ON ir.idItem = i.idItem
-        LEFT JOIN dbo.LAB_Recomendacion rc ON rc.idRecomendacion = ir.idRecomendacion
-WHERE   i.baja = 0 AND i.conceptId IS NOT NULL AND i.conceptId <>'XXX' AND i.idCategoria = 0
-        AND a.baja = 0 
-        -- AND ts.baja = 0
-        -- AND u.baja = 0
-        -- AND r.baja = 0
-        -- AND m.baja = 0
-        -- AND rc.baja = 0
-ORDER BY i.codigo;`;
+        LEFT JOIN dbo.LAB_Recomendacion rc ON rc.idRecomendacion = ir.idRecomendacion `;
+
+const fromLaboratorioPracticasCompuesta = `
+        LEFT JOIN dbo.LAB_PracticaDeterminacion pd on pd.idItemPractica = i.idItem
+        LEFT JOIN dbo.Lab_Item si on pd.idItemDeterminacion = si.idItem `;
+
+const whereLaboratorioPracticas = `
+    WHERE   i.baja = 0 AND i.conceptId IS NOT NULL AND i.conceptId <>'XXX'
+        AND a.baja = 0 `;
+        // -- AND ts.baja = 0
+        // -- AND u.baja = 0
+        // -- AND r.baja = 0
+        // -- AND m.baja = 0
+        // -- AND rc.baja = 0`
+export const consultaLaboratorioPracticasSimples = selectLaboratorioPracticas + fromLaboratorioPracticas + whereLaboratorioPracticas + ` AND i.idCategoria = 0`;
+export const consultaLaboratorioPracticasCompuestas = selectLaboratorioPracticas 
+                                                        + selectLaboratorioPracticasCompuestas 
+                                                        + fromLaboratorioPracticas 
+                                                        + fromLaboratorioPracticasCompuesta 
+                                                        + whereLaboratorioPracticas 
+                                                        + ` AND i.idCategoria = 1`;
