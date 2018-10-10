@@ -18,7 +18,7 @@ db.profesional.aggregate(
 					nombre: "$nacionalidad_nombre",
 				},
 				sexo: 1,
-                                turno: 1,
+				turno: 1,
 				notas: 1,
 				rematriculado: 1,
 				domicilios: [{
@@ -95,10 +95,11 @@ db.profesional.aggregate(
 				],
 				formacionGrado: [{
 					profesion: {
-                                                codigo: "$profesion_codigo_sisa",
-						codigoReferencia: "$profesion_codigo_referencia",
-                                                nombre: "$profesion_nombre",
-                                                tipoDeFormacion: "$profesion_tipo_formacion"
+						codigo: "$profesion_codigo_sisa",
+						codigoReferencia: "$profesion_codigo_referencia",
+
+						nombre: "$profesion_nombre",
+						tipoDeFormacion: "$profesion_tipo_formacion"
 					},
 					entidadFormadora: {
 						codigo: "$entidadFormadora_codigo",
@@ -112,42 +113,48 @@ db.profesional.aggregate(
 						folio: "$grado_matriculacion_folio",
 						inicio: "$grado_matriculacion_inicio",
 						fin: "$grado_matriculacion_fin",
-						baja : {
-							motivo : "",
-							fecha : null
+						baja: {
+							motivo: "",
+							fecha: null
 						},
 					}],
 					//fin:"$grado_matriculacion_fin",
 					matriculado: { $cond: [{ $gte: ["$grado_matriculacion_fin", new Date()] }, true, false] },
 					papelesVerificados: { $cond: [{ $gte: ["$grado_matriculacion_fin", new Date()] }, true, false] },
 					renovacion: false,
+					fechaInscripcion: "$grado_matriculacion_fechaInscripcion",
 				}],
-                                
-				formacionPosgrado: { $cond: [{ $eq: ["$especialidad_nombre", null] }, null,  [{
-					profesion: {
-						codigo: "$profesion_codigo_sisa",
-						nombre: "$profesion_nombre"
-					},
-					especialidad: {
-						codigo: "$especialidad_codigo_sisa",
-						tipo: "$especialidad_tipo",
-						nombre: "$especialidad_nombre"
-					},
-					//fin:"$posgrado_matriculacion_fin",
-					matriculado: { $cond: [{ $gte: ["$posgrado_matriculacion_fin", { $year: new Date() }] }, true, false] },
-					papelesVerificados: { $cond: [{ $gte: ["$posgrado_matriculacion_fin", { $year: new Date() }] }, true, false] },
-					revalida: false,
-					matriculacion: [{
-						matriculaNumero: "$posgrado_matriculacion_matriculaNumero",
-						libro: "$posgrado_matriculacion_libro",
-						folio: "$posgrado_matriculacion_folio",
-						fin: "$posgrado_matriculacion_fin",
-						baja : {
-							motivo : "",
-							fecha : null
+
+				formacionPosgrado: {
+					$cond: [{ $eq: ["$especialidad_nombre", null] }, null, [{
+						profesion: {
+							codigo: "$profesion_codigo_sisa",
+							nombre: "$profesion_nombre"
 						},
-					}],
-                }]]},
+						especialidad: {
+							codigo: "$especialidad_codigo_sisa",
+							tipo: "$especialidad_tipo",
+							nombre: "$especialidad_nombre"
+						},
+						//fin:"$posgrado_matriculacion_fin",
+						matriculado: { $cond: [{ $gte: ["$posgrado_matriculacion_fin", { $year: new Date() }] }, true, false] },
+						papelesVerificados: { $cond: [{ $gte: ["$posgrado_matriculacion_fin", { $year: new Date() }] }, true, false] },
+						revalida: false,
+						tieneVencimiento: "$posgrado_matriculacion_tieneVencimiento",
+						fechasDeAltas: [{ fecha: "$posgrado_matriculacion_fechaAlta" }],
+						matriculacion: [{
+							matriculaNumero: "$posgrado_matriculacion_matriculaNumero",
+							libro: "$posgrado_matriculacion_libro",
+							folio: "$posgrado_matriculacion_folio",
+							fin: "$posgrado_matriculacion_fin",
+
+							baja: {
+								motivo: "",
+								fecha: null
+							},
+						}],
+					}]]
+				},
 				sanciones: [{
 					numero: "$sancion_numero",
 					sancion: {
@@ -176,17 +183,17 @@ db.profesional.aggregate(
 				sanciones: { $addToSet: "$sanciones" },
 				domicilios: { $addToSet: "$domicilios" },
 				contactos: { $addToSet: "$contactos" },
-                                fechaNacimiento: { $first: "$fechaNacimiento" },
+				fechaNacimiento: { $first: "$fechaNacimiento" },
 				lugarNacimiento: { $first: "$lugarNacimiento" },
 				nacionalidad: { $first: "$nacionalidad" },
-                                tipoDocumento: { $first: "$tipoDocumento" },
+				tipoDocumento: { $first: "$tipoDocumento" },
 				nombre: { $first: "$nombre" },
 				apellido: { $first: "$apellido" },
-				documentoVencimiento: { $first: "$documentoVencimiento"},
-				cuit: { $first: "$cuit"},
-                                notas: { $push: "$notas"},
-                                rematriculado: { $first: "$rematriculado"},
-                                turno: { $first:"$turno" },
+				documentoVencimiento: { $first: "$documentoVencimiento" },
+				cuit: { $first: "$cuit" },
+				notas: { $push: "$notas" },
+				rematriculado: { $first: "$rematriculado" },
+				turno: { $first: "$turno" },
 			}
 		},
 
@@ -228,7 +235,7 @@ db.profesional.aggregate(
 						"in": { "$setUnion": ["$$value", "$$this"] }
 					}
 				},
-                                "profesionalMatriculado": true,
+				"profesionalMatriculado": true,
 
 			}
 		},
@@ -253,9 +260,9 @@ db.profesional.aggregate(
 				sanciones: "$sanciones",
 				domicilios: "$domicilios",
 				contactos: "$contactos",
-                                rematriculado: "$rematriculado",
-                                turno: "$turno",
-                                profesionalMatriculado: "$profesionalMatriculado",
+				rematriculado: "$rematriculado",
+				turno: "$turno",
+				profesionalMatriculado: "$profesionalMatriculado",
 			}
 		},
 
