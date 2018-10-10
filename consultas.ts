@@ -176,6 +176,7 @@ P.ProfesionalMatriculaLibro       AS grado_matriculacion_libro,
 P.ProfesionalMatriculaFolio       AS grado_matriculacion_folio,
 cast( CONCAT( P.ProfesionalMatriculaAnio, '-01-01') as DATE) AS grado_matriculacion_inicio,
 P.ProfesionalFchVtoMatricula      AS grado_matriculacion_fin,
+P.FechaOriginal_MA_RM             AS grado_matriculacion_fechaInscripcion,
 -- FORMACION POSGRADO
 ME.ME_EspecialidadID              AS especialidad_codigo,
 E.CodigoSisa                      AS especialidad_codigo_sisa,
@@ -185,6 +186,16 @@ ME.ME_ProfesionEspecialidadMatric AS posgrado_matriculacion_matriculaNumero,
 ME.ME_EspecialidadMatLibro        AS posgrado_matriculacion_libro,
 ME.ME_EspecialidadMatFolio        AS posgrado_matriculacion_folio,
 cast( CONCAT( ME.ME_EspecialidadMatAnio, '-01-01') as DATE) AS posgrado_matriculacion_fin, -- en UI es "Año Vto."
+CASE 
+  (ME.ME_SinVencimiento)
+  WHEN 'NO' then 0
+  ELSE  1 END
+  AS posgrado_matriculacion_tieneVencimiento,
+  (SELECT max(ME_FechaAlta) from matesp_fechasalta
+    WHERE  matesp_fechasalta.ME_ProfesionalDocumento = P.ProfesionalDocumento
+    AND matesp_fechasalta.ME_TipoDocumentoID =  P.TipoDocumentoID
+      AND matesp_fechasalta.ME_EspecialidadID = E.EspecialidadID
+) AS posgrado_matriculacion_fechaAlta,
 -- SANCIONES
 S.ProfesionalSancionNumero      AS sancion_numero,
 S.SancionID                     AS sancion_id,
