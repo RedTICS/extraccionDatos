@@ -389,4 +389,4 @@ export const consultaLaboratorioPracticasCompuestas = selectLaboratorioPracticas
                                                         + fromLaboratorioPracticas 
                                                         + fromLaboratorioPracticasCompuesta 
                                                         + whereLaboratorioPracticas 
-                                                        + ` AND i.idCategoria = 1`;
+                                                        + ` AND i.idCategoria = 1 AND pd.orden = 1`;
