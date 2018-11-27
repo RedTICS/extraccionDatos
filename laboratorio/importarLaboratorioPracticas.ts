@@ -1,14 +1,15 @@
 import * as mongodb from 'mongodb';
-import * as config from './config';
+import * as config from '../config';
 import * as consultas from './consultas';
 import * as sql from 'mssql';
+
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
 var myConnection = {
     user: config.hpnUser,
     password: config.hpnPassword,
     server: config.hpnServerSql,
-    port: config.hpnPort,
+    // port: config.hpnPort,
     database: config.hpnDatabaseSql,
     requestTimeout: config.requestTimeout
 };
@@ -96,6 +97,8 @@ async function aggregate(compuestas){
             nombre: "$tipoLaboratorio_nombre"
         },
         area: {
+            // _id: new mongodb.ObjectID("$area_objectId"),
+            _id: "$area_objectId",
             nombre: "$area_nombre",
             concepto: {
                 conceptId: "$area_conceptoSnomed"
