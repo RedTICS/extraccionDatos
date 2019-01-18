@@ -166,7 +166,12 @@ async function aggregate(compuestas){
             codigo: '$subitem_codigo',
             codigoNomenclador: '$subitem_codigoNomenclador',
             nombre: '$subitem_nombre'
+        },
+        configuracionAnalizador:{
+            cobasC311: '$analizador_idItemCobasC311',
+            cobasC221: '$analizador_idItemCobasC221'
         }
+
     };
 
     const group = {
@@ -187,7 +192,8 @@ async function aggregate(compuestas){
         valoresCriticos: { $first: '$valoresCriticos' },
         recomendaciones: { $first: '$recomendaciones' },
         factorProduccion: { $first: '$factorProduccion' },
-        opciones: { $push: '$opciones' }
+        opciones: { $push: '$opciones' },
+        configuracionAnalizador: { $first:'$configuracionAnalizador'}
     };
 
     if (compuestas) {

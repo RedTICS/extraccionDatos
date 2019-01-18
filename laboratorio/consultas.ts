@@ -7,7 +7,9 @@ const fromLaboratorioPracticas = `
         LEFT JOIN dbo.LAB_ValorReferencia vr ON vr.idItem = i.idItem
         LEFT JOIN dbo.LAB_Metodo m ON m.idMetodo = vr.idMetodo
         LEFT JOIN dbo.LAB_ItemRecomendacion ir ON ir.idItem = i.idItem
-        LEFT JOIN dbo.LAB_Recomendacion rc ON rc.idRecomendacion = ir.idRecomendacion `;
+        LEFT JOIN dbo.LAB_Recomendacion rc ON rc.idRecomendacion = ir.idRecomendacion 
+        LEFT JOIN dbo.LAB_CobasC311 C311 ON C311.idItemSil = I.idItem 
+        LEFT JOIN dbo.LAB_CobasB221Item C221 ON C221.idItem = i.idItem `;
 
 const selectLaboratorioPracticas = `
         SELECT  i.codigo ,
@@ -58,7 +60,9 @@ const selectLaboratorioPracticas = `
                 i.etiquetaAdicional ,
                 ir.idRecomendacion ,
                 rc.nombre AS recomendaciones_nombre ,
-                rc.descripcion AS recomendaciones_descripcion`;
+                rc.descripcion AS recomendaciones_descripcion, 
+                C311.idItemCobas AS analizador_idItemCobasC311,
+                C221.idCobas AS analizador_idItemCobasC221 `;
 
 const selectLaboratorioPracticasCompuestas = `
                 , si.codigo AS subitem_codigo ,
