@@ -97,8 +97,8 @@ async function aggregate(compuestas){
             nombre: "$tipoLaboratorio_nombre"
         },
         area: {
-            // _id: new mongodb.ObjectID("$area_objectId"),
-            _id: "$area_objectId",
+            // id: mongodb.ObjectID("$area_objectId"),
+            id: "$area_objectId",
             nombre: "$area_nombre",
             concepto: {
                 conceptId: "$area_conceptoSnomed"
@@ -166,6 +166,10 @@ async function aggregate(compuestas){
             codigo: '$subitem_codigo',
             codigoNomenclador: '$subitem_codigoNomenclador',
             nombre: '$subitem_nombre'
+        },
+        tipoMuestra: {
+            nombre: '$tipoMuestra_nombre',
+            concepto: '$tipoMuestra_conceptId'
         }
     };
 
@@ -187,7 +191,8 @@ async function aggregate(compuestas){
         valoresCriticos: { $first: '$valoresCriticos' },
         recomendaciones: { $first: '$recomendaciones' },
         factorProduccion: { $first: '$factorProduccion' },
-        opciones: { $push: '$opciones' }
+        opciones: { $push: '$opciones' },
+        tipoMuestra: { $first: '$tipoMuestra' }
     };
 
     if (compuestas) {
@@ -205,9 +210,9 @@ async function aggregate(compuestas){
         }
     ]).toArray();
 
+    const snomedURLexpression = 'http://localhost:3002/api/core/term/snomed/expression?expression=';
     let practicaCollection = db.collection('practica');
     let setSCTConcept = (objectId, conceptId, field) => {
-        let snomedURLexpression = 'http://localhost:3002/api/core/term/snomed/expression?expression=';
 
         var xmlHttp = new XMLHttpRequest();
         xmlHttp.open( "GET", snomedURLexpression + conceptId); // third parameter false for synchronous request
@@ -224,6 +229,10 @@ async function aggregate(compuestas){
                     case 'unidadMedida':
                     setParam =  {$set: { "unidadMedida.concepto": conceptoSnomed }};
                     break;
+
+                    case 'tipoMuestra': 
+                    setParam =  {$set: { "tipoMuestra.concepto": conceptoSnomed }};
+                    break;
                 }
                 await practicaCollection.findAndModify({ "_id": objectId }, [['_id','asc']], setParam );
             }
@@ -237,15 +246,6 @@ async function aggregate(compuestas){
     await practicaCollection.find({}).toArray(function(err, practicas) {
         // let promises = [];
         practicas.map( async (practica) => {
-            if(practica.codigo === '475') {
-                console.log('hrmograma 1', practica.requeridos.length)
-            }
-            if(practica.codigo === '354') {
-                console.log('leucocitaria 1', practica.requeridos.length)
-            }
-
-
-            
 
             if (practica.categoria === 'compuesta') {
                 let codigos = [];
@@ -261,21 +261,14 @@ async function aggregate(compuestas){
                     },
                     { $project: {_id:'$_id'} }
                 ]).toArray();
-                if(practica.codigo === '475') {
-                    console.log(requeridos);
-                
-                    console.log('hrmograma 2',practica._id, practica.requeridos.length)
-                }
-                if(practica.codigo === '354') {
-                    console.log(requeridos);
-                
-                    console.log('leucocitaria 2',practica._id, practica.requeridos.length)
-                }
                 
                 await practicaCollection.findAndModify({ "_id": practica._id }, [['_id','asc']], {$set: { "requeridos": requeridos } });
             }
             setSCTConcept(practica._id, practica.concepto.conceptId,'concepto');
             setSCTConcept(practica._id, practica.unidadMedida.concepto.conceptId, 'unidadMedida');
+            setSCTConcept(practica._id, practica.tipoMuestra.concepto, 'tipoMuestra');
+
+            practicaCollection.update({ "_id": practica._id }, {$set : {id: practica._id.toString()}});
         });    
     });
 

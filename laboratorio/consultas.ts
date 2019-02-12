@@ -7,7 +7,8 @@ const fromLaboratorioPracticas = `
         LEFT JOIN dbo.LAB_ValorReferencia vr ON vr.idItem = i.idItem
         LEFT JOIN dbo.LAB_Metodo m ON m.idMetodo = vr.idMetodo
         LEFT JOIN dbo.LAB_ItemRecomendacion ir ON ir.idItem = i.idItem
-        LEFT JOIN dbo.LAB_Recomendacion rc ON rc.idRecomendacion = ir.idRecomendacion `;
+        LEFT JOIN dbo.LAB_Recomendacion rc ON rc.idRecomendacion = ir.idRecomendacion
+        LEFT JOIN dbo.LAB_TipoMuestra tp ON i.duracion = tp.codigo`;
 
 const selectLaboratorioPracticas = `
         SELECT  i.codigo ,
@@ -58,7 +59,9 @@ const selectLaboratorioPracticas = `
                 i.etiquetaAdicional ,
                 ir.idRecomendacion ,
                 rc.nombre AS recomendaciones_nombre ,
-                rc.descripcion AS recomendaciones_descripcion`;
+                rc.descripcion AS recomendaciones_descripcion,
+                tp.descripcion AS tipoMuestra_nombre,
+                tp.conceptId AS tipoMuestra_conceptId `;
 
 const selectLaboratorioPracticasCompuestas = `
                 , si.codigo AS subitem_codigo ,
