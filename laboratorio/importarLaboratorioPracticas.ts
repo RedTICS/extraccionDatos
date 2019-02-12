@@ -170,7 +170,12 @@ async function aggregate(compuestas){
         tipoMuestra: {
             nombre: '$tipoMuestra_nombre',
             concepto: '$tipoMuestra_conceptId'
+        },
+        configuracionAnalizador: {
+            cobasC311: '$analizador_idItemCobasC311',
+            cobasC221: '$analizador_idItemCobasC221'
         }
+
     };
 
     const group = {
@@ -192,7 +197,8 @@ async function aggregate(compuestas){
         recomendaciones: { $first: '$recomendaciones' },
         factorProduccion: { $first: '$factorProduccion' },
         opciones: { $push: '$opciones' },
-        tipoMuestra: { $first: '$tipoMuestra' }
+        tipoMuestra: { $first: '$tipoMuestra' },
+        configuracionAnalizador: { $first:'$configuracionAnalizador'}
     };
 
     if (compuestas) {
