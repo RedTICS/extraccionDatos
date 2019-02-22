@@ -124,7 +124,8 @@ async function aggregate(compuestas){
                 },
                 opciones: []
             },
-            valorDefault: "$resultado_valorDefault"
+            valorDefault: "$resultado_valorDefault",
+            formula: "$resultado_formula"
         },
         presentaciones: {
             codigo: "",

@@ -10,7 +10,8 @@ const fromLaboratorioPracticas = `
         LEFT JOIN dbo.LAB_TipoMuestra tp ON i.duracion = tp.codigo
         LEFT JOIN dbo.LAB_Recomendacion rc ON rc.idRecomendacion = ir.idRecomendacion 
         LEFT JOIN dbo.LAB_CobasC311 C311 ON C311.idItemSil = I.idItem 
-        LEFT JOIN dbo.LAB_CobasB221Item C221 ON C221.idItem = i.idItem `;
+        LEFT JOIN dbo.LAB_CobasB221Item C221 ON C221.idItem = i.idItem
+        LEFT JOIN dbo.LAB_Formula fx ON fx.idItem = i.idItem `;
 
 const selectLaboratorioPracticas = `
         SELECT  i.codigo ,
@@ -65,7 +66,8 @@ const selectLaboratorioPracticas = `
                 tp.descripcion AS tipoMuestra_nombre,
                 tp.conceptId AS tipoMuestra_conceptId,
                 C311.idItemCobas AS analizador_idItemCobasC311,
-                C221.idCobas AS analizador_idItemCobasC221 `;
+                C221.idCobas AS analizador_idItemCobasC221, 
+                fx.formula AS resultado_formula `;
 
 const selectLaboratorioPracticasCompuestas = `
                 , si.codigo AS subitem_codigo ,

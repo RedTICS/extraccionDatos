@@ -10,7 +10,8 @@
     "mysql": "^2.15.0",
     "request": "^2.78.0",
     "typescript": "^2.6.2",
-    "xml2json": "^0.10.0"
+    "xml2json": "^0.10.0",
+    "xmlhttprequest": "^1.8.0"
   },
   "devDependencies": {
     "@types/es6-promise": "0.0.33",
