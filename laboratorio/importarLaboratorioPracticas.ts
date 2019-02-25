@@ -134,7 +134,7 @@ async function aggregate(compuestas){
                 nombre: ""
             },
             metodo: "$metodo_nombre",
-            valoresReferencia: [{
+            valoresReferencia: {
                 sexo: "$metodo_valoresReferencia_sexo",
                 todasEdades: "$metodo_valoresReferencia_todasEdades",
                 edadDesde: "$metodo_valoresReferencia_edadDesde",
@@ -145,7 +145,7 @@ async function aggregate(compuestas){
                 valorMaximo: "$metodo_valoresReferencia_valorMaximo",
                 observacion: "$metodo_valoresReferencia_observacion",
                 activo: "$metodo_valoresReferencia_activo"
-            }]
+            }
         },
         valoresCriticos: {
             minimo: "$valoresCriticos_minimo",
@@ -248,6 +248,28 @@ async function aggregate(compuestas){
     }
 
     practicasTemp.map((practica) => { practica._id = new mongodb.ObjectID() });
+
+    practicasTemp.forEach((practica) => {
+        
+        let nuevoArrayPresentaciones = [];
+        let relMetodoValoresReferencia = {};
+
+        practica.presentaciones.forEach(p => {
+            if (!nuevoArrayPresentaciones.some(x => { return p.metodo === x.metodo; } )) {
+                nuevoArrayPresentaciones.push(p);
+            }
+
+            if (!relMetodoValoresReferencia[p.metodo]){
+                relMetodoValoresReferencia[p.metodo] = []
+            }
+
+            relMetodoValoresReferencia[p.metodo].push(p.valoresReferencia);
+        });
+
+        practica.presentaciones = nuevoArrayPresentaciones;
+        practica.presentaciones.forEach(p => p.valoresReferencia = relMetodoValoresReferencia[p.metodo]);
+    });
+
     await practicaCollection.insertMany(practicasTemp, { ordered: false })
     await practicaCollection.update({}, { $unset: { opciones: 1 } }, false)
     await practicaCollection.find({}).toArray(function(err, practicas) {
