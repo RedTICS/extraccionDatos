@@ -11,7 +11,8 @@ const fromLaboratorioPracticas = `
         LEFT JOIN dbo.LAB_Recomendacion rc ON rc.idRecomendacion = ir.idRecomendacion 
         LEFT JOIN dbo.LAB_CobasC311 C311 ON C311.idItemSil = I.idItem 
         LEFT JOIN dbo.LAB_CobasB221Item C221 ON C221.idItem = i.idItem
-        LEFT JOIN dbo.LAB_Formula fx ON fx.idItem = i.idItem `;
+        LEFT JOIN dbo.LAB_Formula fx ON fx.idItem = i.idItem 
+        LEFT JOIN dbo.LAB_ResultadoItem res ON res.idItem = i.idItem `;
 
 const selectLaboratorioPracticas = `
         SELECT  i.codigo ,
@@ -30,9 +31,18 @@ const selectLaboratorioPracticas = `
                 i.ordenImpresion ,
                 u.nombre unidadMedida_nombre ,
                 u.conceptId AS unidadMedida_concepto_conceptId ,
-                '' AS requeridos ,
-                r.resultado AS resultado_formato_opciones ,
-                i.resultadoDefecto AS resultado_valorDefault ,
+                '' AS requeridos , 
+                
+                CASE ( i.idResultadoPorDefecto ) 
+                    WHEN 0 THEN 
+                        CASE 
+                            WHEN len(i.resultadoDefecto)=0 THEN null 
+                            WHEN i.resultadoDefecto= 'Seleccionar' THEN null 
+                            ELSE i.resultadoDefecto 
+                        END 
+                    ELSE res.resultado 
+                END AS resultado_valorDefault ,
+                r.resultado AS resultado_formato_opciones , 
                 CASE ( i.idTipoResultado )
                   WHEN 1 THEN 'Numérico'
                   WHEN 2 THEN 'Texto'
