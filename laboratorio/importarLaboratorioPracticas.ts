@@ -17,7 +17,7 @@ const url = config.urlMigracion;
 
 function obtenerPracticasSimples() {
     return obtenerPracticas(consultas.consultaLaboratorioPracticasSimples);
-}   
+}
 async function obtenerPracticasCompuestas() {
     return obtenerPracticas(consultas.consultaLaboratorioPracticasCompuestas);
 }
@@ -26,13 +26,13 @@ async function obtenerPracticas(query) {
     return new Promise((resolve, reject) => {
         new sql.Request()
             .query(query)
-            .then((recordset) => { 
-                resolve(recordset.recordset); 
+            .then((recordset) => {
+                resolve(recordset.recordset);
             })
             .catch(function (err) {
                 reject(err);
-            });  
-    });    
+            });
+    });
 }
 
 run();
@@ -44,10 +44,10 @@ async function run() {
     console.log("mongo connected")
     let db = await conn.db('andes');
     console.log("get andes DB")
-    
+
     await db.collection('practica').deleteMany();
     await db.collection('practicaTemp').deleteMany();
-    
+
     console.log("practicas removed")
     conn.close();
     console.log("mongo connection closed")
@@ -60,7 +60,7 @@ async function run() {
     await insertmongo(await obtenerPracticasCompuestas());
     await aggregate(true);
     sql.close();
-    
+
     console.log("end of program")
 }
 
@@ -79,7 +79,7 @@ async function insertmongo(datos) {
     }
 }
 
-async function aggregate(compuestas){
+async function aggregate(compuestas) {
     let conn = await mongodb.MongoClient.connect(url);
     let db = await conn.db('andes');
     const project: any = {
@@ -125,7 +125,16 @@ async function aggregate(compuestas){
                 opciones: []
             },
             valorDefault: "$resultado_valorDefault",
-            formula: "$resultado_formula"
+            formula: {
+                formula: "$resultado_formula",
+                formulaControl: "$formulaControl",
+                tipoFormula: "$tipoFormula",
+                operacion: "$formulaOperacion",
+                condicionSexo: "$formulaCondicionSexo",
+                condicionEdadDesde: "$formulaCondicionEdadDesde",
+                condicionEdadHasta: "$formulaCondicionEdadHasta",
+                condicionUnidadEdad: "$formulaCondicionUnidadEdad"
+            }
         },
         presentaciones: {
             codigo: "",
@@ -199,7 +208,7 @@ async function aggregate(compuestas){
         factorProduccion: { $first: '$factorProduccion' },
         opciones: { $push: '$opciones' },
         tipoMuestra: { $first: '$tipoMuestra' },
-        configuracionAnalizador: { $first:'$configuracionAnalizador'}
+        configuracionAnalizador: { $first: '$configuracionAnalizador' }
     };
 
     if (compuestas) {
@@ -207,7 +216,7 @@ async function aggregate(compuestas){
     }
 
     let practicasTemp = await db.collection('practicaTemp').aggregate([
-        { $match: { categoria: compuestas ? 'compuesta' : 'simple' }},
+        { $match: { categoria: compuestas ? 'compuesta' : 'simple' } },
         { $project: project },
         { $group: group },
         {
@@ -222,26 +231,26 @@ async function aggregate(compuestas){
     let setSCTConcept = (objectId, conceptId, field) => {
 
         var xmlHttp = new XMLHttpRequest();
-        xmlHttp.open( "GET", snomedURLexpression + conceptId); // third parameter false for synchronous request
+        xmlHttp.open("GET", snomedURLexpression + conceptId); // third parameter false for synchronous request
         xmlHttp.onreadystatechange = async function () {
             if (this.readyState == 4 && this.status == 200) {
-                let conceptoSnomed = JSON.parse(this.responseText).length > 0 ? JSON.parse(this.responseText)[0] : null ;
+                let conceptoSnomed = JSON.parse(this.responseText).length > 0 ? JSON.parse(this.responseText)[0] : null;
 
                 let setParam;
                 switch (field) {
                     case 'concepto':
-                    setParam =  {$set: { "concepto": conceptoSnomed }};
-                    break;
+                        setParam = { $set: { "concepto": conceptoSnomed } };
+                        break;
 
                     case 'unidadMedida':
-                    setParam =  {$set: { "unidadMedida.concepto": conceptoSnomed }};
-                    break;
+                        setParam = { $set: { "unidadMedida.concepto": conceptoSnomed } };
+                        break;
 
-                    case 'tipoMuestra': 
-                    setParam =  {$set: { "tipoMuestra.concepto": conceptoSnomed }};
-                    break;
+                    case 'tipoMuestra':
+                        setParam = { $set: { "tipoMuestra.concepto": conceptoSnomed } };
+                        break;
                 }
-                await practicaCollection.findAndModify({ "_id": objectId }, [['_id','asc']], setParam );
+                await practicaCollection.findAndModify({ "_id": objectId }, [['_id', 'asc']], setParam);
             }
         }
         xmlHttp.send();
@@ -250,16 +259,16 @@ async function aggregate(compuestas){
     practicasTemp.map((practica) => { practica._id = new mongodb.ObjectID() });
 
     practicasTemp.forEach((practica) => {
-        
+
         let nuevoArrayPresentaciones = [];
         let relMetodoValoresReferencia = {};
 
         practica.presentaciones.forEach(p => {
-            if (!nuevoArrayPresentaciones.some(x => { return p.metodo === x.metodo; } )) {
+            if (!nuevoArrayPresentaciones.some(x => { return p.metodo === x.metodo; })) {
                 nuevoArrayPresentaciones.push(p);
             }
 
-            if (!relMetodoValoresReferencia[p.metodo]){
+            if (!relMetodoValoresReferencia[p.metodo]) {
                 relMetodoValoresReferencia[p.metodo] = []
             }
 
@@ -272,36 +281,44 @@ async function aggregate(compuestas){
 
     await practicaCollection.insertMany(practicasTemp, { ordered: false })
     await practicaCollection.update({}, { $unset: { opciones: 1 } }, false)
-    await practicaCollection.find({}).toArray(function(err, practicas) {
+    await practicaCollection.find({}).toArray(function (err, practicas) {
         // let promises = [];
-        practicas.map( async (practica) => {
+        practicas.map(async (practica) => {
 
             if (practica.categoria === 'compuesta') {
                 let codigos = [];
-                    practica.requeridos.map( (requerido) => {
+                practica.requeridos.map((requerido) => {
                     codigos.push(requerido.codigo)
                 });
-                
+
                 let requeridos = await db.collection('practica').aggregate([
                     {
-                    $match: {
-                        'codigo' : {$in: codigos }
-                    }
+                        $match: {
+                            'codigo': { $in: codigos }
+                        }
                     },
-                    { $project: {_id:'$_id'} }
+                    { $project: { _id: '$_id' } }
                 ]).toArray();
-                
-                await practicaCollection.findAndModify({ "_id": practica._id }, [['_id','asc']], {$set: { "requeridos": requeridos } });
-            }
-            setSCTConcept(practica._id, practica.concepto.conceptId,'concepto');
-            setSCTConcept(practica._id, practica.unidadMedida.concepto.conceptId, 'unidadMedida');
-            setSCTConcept(practica._id, practica.tipoMuestra.concepto, 'tipoMuestra');
 
-            practicaCollection.update({ "_id": practica._id }, {$set : {id: practica._id.toString()}});
-        });    
+                await practicaCollection.findAndModify({ "_id": practica._id }, [['_id', 'asc']], { $set: { "requeridos": requeridos } });
+            }
+            if (practica.concepto) {
+                setSCTConcept(practica._id, practica.concepto.conceptId, 'concepto');
+            }
+
+            if (practica.unidadMedida) {
+                setSCTConcept(practica._id, practica.unidadMedida.concepto.conceptId, 'unidadMedida');
+            }
+
+            if (practica.tipoMuestra) {
+                setSCTConcept(practica._id, practica.tipoMuestra.concepto, 'tipoMuestra');
+            }
+
+            practicaCollection.update({ "_id": practica._id }, { $set: { id: practica._id.toString() } });
+        });
     });
 
     await db.collection('practicaTemp').deleteMany();
-    
+
     console.log('END AGREGGATE')
 }

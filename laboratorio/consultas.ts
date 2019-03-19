@@ -76,8 +76,15 @@ const selectLaboratorioPracticas = `
                 tp.descripcion AS tipoMuestra_nombre,
                 tp.conceptId AS tipoMuestra_conceptId,
                 C311.idItemCobas AS analizador_idItemCobasC311,
-                C221.idCobas AS analizador_idItemCobasC221, 
-                fx.formula AS resultado_formula `;
+                C221.idCobas AS analizador_idItemCobasC221,
+                fx.formula AS resultado_formula,
+                fx.formulaControl AS formulaControl,
+                fx.idTipoFormula AS tipoFormula,
+                fx.operacion AS formulaOperacion,
+                fx.condicionSexo AS formulaCondicionSexo,
+                fx.condicionEdadDesde AS formulaCondicionEdadDesde,
+                fx.condicionEdadHasta AS formulaCondicionEdadHasta,
+                fx.condicionUnidadEdad AS formulaCondicionUnidadEdad`;
 
 const selectLaboratorioPracticasCompuestas = `
                 , si.codigo AS subitem_codigo ,
@@ -102,4 +109,4 @@ export const consultaLaboratorioPracticasCompuestas = selectLaboratorioPracticas
     + fromLaboratorioPracticas
     + fromLaboratorioPracticasCompuesta
     + whereLaboratorioPracticas
-    + ` AND i.idCategoria = 1 AND pd.orden = 1`;
+    + ` AND i.idCategoria = 1`;
