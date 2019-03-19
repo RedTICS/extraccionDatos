@@ -125,7 +125,7 @@ async function aggregate(compuestas) {
                 opciones: []
             },
             valorDefault: "$resultado_valorDefault",
-            formula: {
+            configuracionFormula: {
                 formula: "$resultado_formula",
                 formulaControl: "$formulaControl",
                 tipoFormula: "$tipoFormula",
