@@ -15,13 +15,29 @@ var myConnection = {
 };
 const url = config.urlMigracion;
 
+/**
+ *
+ *
+ * @returns
+ */
 function obtenerPracticasSimples() {
     return obtenerPracticas(consultas.consultaLaboratorioPracticasSimples);
 }
+/**
+ *
+ *
+ * @returns
+ */
 async function obtenerPracticasCompuestas() {
     return obtenerPracticas(consultas.consultaLaboratorioPracticasCompuestas);
 }
 
+/**
+ *
+ *
+ * @param {*} query
+ * @returns
+ */
 async function obtenerPracticas(query) {
     return new Promise((resolve, reject) => {
         new sql.Request()
@@ -37,6 +53,10 @@ async function obtenerPracticas(query) {
 
 run();
 
+/**
+ *
+ *
+ */
 async function run() {
     console.log("start")
     console.log("mongo connecting...")
@@ -64,6 +84,11 @@ async function run() {
     console.log("end of program")
 }
 
+/**
+ *
+ *
+ * @param {*} datos
+ */
 async function insertmongo(datos) {
     console.log("insertMongo")
     try {
@@ -79,6 +104,11 @@ async function insertmongo(datos) {
     }
 }
 
+/**
+ *
+ *
+ * @param {*} compuestas
+ */
 async function aggregate(compuestas) {
     let conn = await mongodb.MongoClient.connect(url);
     let db = await conn.db('andes');
@@ -91,7 +121,6 @@ async function aggregate(compuestas) {
         ordenImpresion: 1,
         etiquetaAdicional: 1,
         concepto: { conceptId: "$conceptoSnomed" },
-        sistema: null,
         tipo: compuestas ? 'Compuesta' : 'Simple',
         tipoLaboratorio: {
             nombre: "$tipoLaboratorio_nombre"
@@ -168,7 +197,7 @@ async function aggregate(compuestas) {
         opciones: {
             $cond: [
                 { $eq: ["$resultado_formato_opciones", null] },
-                [],
+                null,
                 "$resultado_formato_opciones"
             ]
         },
@@ -197,7 +226,6 @@ async function aggregate(compuestas) {
         categoria: { $first: '$categoria' },
         ordenImpresion: { $first: '$ordenImpresion' },
         concepto: { $first: "$concepto" },
-        sistema: { $first: '$sistema' },
         tipoLaboratorio: { $first: "$tipoLaboratorio" },
         area: { $first: '$area' },
         unidadMedida: { $first: '$unidadMedida' },
@@ -220,7 +248,7 @@ async function aggregate(compuestas) {
         { $project: project },
         { $group: group },
         {
-            $addFields: {
+            $addFields: {   
                 "resultado.formato.opciones": '$opciones'
             }
         }
@@ -277,6 +305,7 @@ async function aggregate(compuestas) {
 
         practica.presentaciones = nuevoArrayPresentaciones;
         practica.presentaciones.forEach(p => p.valoresReferencia = relMetodoValoresReferencia[p.metodo]);
+        limpiarObjeto(practica);
     });
 
     await practicaCollection.insertMany(practicasTemp, { ordered: false })
@@ -321,4 +350,22 @@ async function aggregate(compuestas) {
     await db.collection('practicaTemp').deleteMany();
 
     console.log('END AGREGGATE')
+}
+
+function limpiarObjeto(obj) {
+    let traverse = (o) => {
+        for (var i in o) {
+            if (isEmpty(o[i])) {
+                delete o[i];
+            }  else if (typeof (o[i]) == "object") {
+                traverse(o[i]);
+            }
+        }
+    };
+
+    let isEmpty = (v) => {
+        return v === null || v === '' || ( Array.isArray(v) && v.every( (e) => e === null) );
+    }
+
+    traverse(obj);
 }
